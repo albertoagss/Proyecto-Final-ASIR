@@ -1,6 +1,6 @@
 ---
 
-- name: Establecer la configuración Proxy
+- name: Import proxy config
   template:
           src: files/proxy.conf
           dest: /etc/httpd/conf.d/proxy.conf
@@ -9,7 +9,7 @@
           mode: '0644'
   register: template_result
 
-- name: Reiniciar servicio httpd
+- name: Restart httpd service
   service:
           name: httpd
           state: restarted

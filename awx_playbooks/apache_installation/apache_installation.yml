@@ -1,5 +1,5 @@
 ---
-- name: Instalar Apache
+- name: Apache installation
   hosts: Apache
   become: true
 

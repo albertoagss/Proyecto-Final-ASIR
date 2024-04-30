@@ -1,8 +1,0 @@
----
-
-########## ACTUALMENTE NO LOS USO #############
-- name: Reiniciar apache
-  service:
-          name: apache2
-          state: restarted
-  listen: "restart apache"

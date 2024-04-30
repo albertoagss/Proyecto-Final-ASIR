@@ -1,6 +1,6 @@
 ---
 
-- name: Instalar httpd
+- name: Install httpd
   yum:
           name: httpd
           state: latest
@@ -8,37 +8,37 @@
   delay: 10
   register: httpd_result
 
-- name: Iniciar servicio httpd
+- name: Start httpd service
   service:
           name: httpd
           state: started
           enabled: yes
   when: httpd_result is success
 
-############# ABRIR PUERTO PARA HTTP CON FIREWALLD #################
-#### SI FIREWALLD NO ESTÁ DISPONIBLE (COMO POR EJEMPLO EN UBI8) ####
-#### SE INSTALA Y SE ABRE EL PUERTO CON IPTABLES ###################
+#### OPEN HTTP PORT WITH FIREWALLD #################################
+#### IF FIREWALLD ISN'T AVAILABLE (FOR EXAMPLE IN UBI 8) ###########
+#### IPTABLES IS INSTALLED AND THE PORT IS OPENED WITH THIS ########
 
-- name: Abrir puerto para el servicio httpd
+- name: Open port for httpd service
   firewalld:
           service: http
           permanent: true
           state: enabled
   register: firewalld_result
 
-- name: Reiniciar firewall
+- name: Restart firewall
   service:
           name: firewalld
           state: reloaded
   when: firewalld_result is success
 
-- name: Instalar iptables si firewalld no está disponible
+- name: Install iptables if firewalld isn't available
   yum:
           name: iptables
           state: present
   when: firewalld_result is failed
 
-- name: Abrir puerto para httpd con iptables
+- name: Open port for httpd with iptables
   iptables:
           chain: INPUT
           protocol: tcp
@@ -48,7 +48,7 @@
 
 ##########################################################################
 
-- name: Deshabilitar SELINUX
+- name: Disable SELINUX
   template:
           src: files/config
           dest: /etc/selinux/config
@@ -57,14 +57,14 @@
           mode: '0644'
   register: selinux_result
 
-- name: Iniciar servicio httpd
+- name: Start httpd service
   service:
           name: httpd
           state: started
           enabled: yes
   when: selinux_result is success
 
-- name: Reiniciar servidor
+- name: Reboot server
   reboot:
           reboot_timeout: 30
           post_reboot_delay: 30

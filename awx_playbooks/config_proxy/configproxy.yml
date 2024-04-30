@@ -1,5 +1,5 @@
 ---
-- name: Configurar Proxy
+- name: Reverse proxy configuration
   hosts: ReverseProxy
   become: true
 
