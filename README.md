@@ -7,6 +7,7 @@ El proyecto se titula “Despliegue automatizado con Ansible y AWX de un entorno
 	
 La idea de mi proyecto consiste en la creación y despliegue automatizado de un entorno LAMP para la instalación de uno o varios gestores de contenido.
 El entorno constaría de tres máquinas:
+
 	- Una primera máquina configurada para que funcione como servidor proxy inverso (para ello usaré Apache) que redirigirá las peticiones web a la segunda máquina, que será la que tendrá instalado el gestor de contenido.
 	- La segunda máquina contendrá Apache y el gestor de contenido instalado, en este caso será Prestashop.
 	- La tercera máquina actuará como servidor de base de datos, necesaria para que el gestor de contenidos funcione.
