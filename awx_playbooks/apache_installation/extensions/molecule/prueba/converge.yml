@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Test role
+      ansible.builtin.include_role:
+              name: apache_installation
+              tasks_from: apache_installation.yml

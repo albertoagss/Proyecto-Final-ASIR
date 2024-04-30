@@ -1,0 +1,71 @@
+---
+
+- name: Instalar httpd
+  yum:
+          name: httpd
+          state: latest
+  retries: 3
+  delay: 10
+  register: httpd_result
+
+- name: Iniciar servicio httpd
+  service:
+          name: httpd
+          state: started
+          enabled: yes
+  when: httpd_result is success
+
+############# ABRIR PUERTO PARA HTTP CON FIREWALLD #################
+#### SI FIREWALLD NO ESTÁ DISPONIBLE (COMO POR EJEMPLO EN UBI8) ####
+#### SE INSTALA Y SE ABRE EL PUERTO CON IPTABLES ###################
+
+- name: Abrir puerto para el servicio httpd
+  firewalld:
+          service: http
+          permanent: true
+          state: enabled
+  register: firewalld_result
+
+- name: Reiniciar firewall
+  service:
+          name: firewalld
+          state: reloaded
+  when: firewalld_result is success
+
+- name: Instalar iptables si firewalld no está disponible
+  yum:
+          name: iptables
+          state: present
+  when: firewalld_result is failed
+
+- name: Abrir puerto para httpd con iptables
+  iptables:
+          chain: INPUT
+          protocol: tcp
+          destination_port: 80
+          jump: ACCEPT
+  when: firewalld_result is failed
+
+##########################################################################
+
+- name: Deshabilitar SELINUX
+  template:
+          src: files/config
+          dest: /etc/selinux/config
+          owner: root
+          group: root
+          mode: '0644'
+  register: selinux_result
+
+- name: Iniciar servicio httpd
+  service:
+          name: httpd
+          state: started
+          enabled: yes
+  when: selinux_result is success
+
+- name: Reiniciar servidor
+  reboot:
+          reboot_timeout: 30
+          post_reboot_delay: 30
+  when: selinux_result is success

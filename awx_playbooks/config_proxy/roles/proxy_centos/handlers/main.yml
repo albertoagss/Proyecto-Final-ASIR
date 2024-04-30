@@ -1,0 +1,8 @@
+---
+
+########## ACTUALMENTE NO LO USO #######3
+- name: Reiniciar servicio httpd
+  service:
+          name: httpd
+          state: restarted
+  listen: "restart httpd"
