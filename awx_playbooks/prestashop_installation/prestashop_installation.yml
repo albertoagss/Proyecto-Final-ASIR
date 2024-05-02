@@ -1,1 +1,11 @@
 ---
+- name: Install Prestashop
+  hosts: Wordpress #CAMBIAR
+  become: true
+
+  roles:
+          - role: prestashop_centos
+            when: ansible_distribution == 'CentOS'
+
+          - role: prestashop_debian
+            when: ansible_distribution == 'Debian'

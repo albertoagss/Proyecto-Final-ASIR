@@ -1,0 +1,33 @@
+---
+
+- name: Install php and extensions
+  apt:
+          name: "{{ item }}"
+          state: latest
+  loop:
+          - php
+          - php-curl
+          - php-dom
+          - php-fileinfo
+          - php-gd
+          - php-intl
+          - php-mbstring
+          - php-zip
+          - php-json
+          - php-iconv
+  retries: 3
+  delay: 10
+
+- name: Download Prestashop
+  get_url:
+          url: "https://github.com/PrestaShop/PrestaShop/archive/refs/tags/8.1.5.tar.gz"
+          dest: "/tmp/prestashop.tar.gz"
+
+- name: Extract Prestashop files
+  unarchive:
+          src: "/tmp/prestashop.tar.gz"
+          dest: "/var/www/html/"
+          remote_src: yes
+          owner: www-data
+          group: www-data
+          mode: '0755'

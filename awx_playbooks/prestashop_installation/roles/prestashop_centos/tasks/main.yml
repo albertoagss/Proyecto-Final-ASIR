@@ -1,0 +1,60 @@
+---
+
+- name: Install PHP and extensions
+  yum:
+          name: "{{ item }}"
+  loop:
+          - php
+          - php-curl
+          - php-dom
+          - php-fileinfo
+          - php-gd
+          - php-intl
+          - php-mbstring
+          - php-zip
+          - php-json
+          - php-iconv
+  retries: 3
+  delay: 10
+  register: php_result
+
+- name: Restart httpd service
+  service:
+          name: httpd
+          state: restarted
+  when: php_result is success
+
+- name: Download Prestashop
+  get_url:
+          url: "https://github.com/PrestaShop/PrestaShop/archive/refs/tags/8.1.5.tar.gz"
+          dest: "/tmp/prestashop.tar.gz"
+
+- name: Extract Prestashop files
+  unarchive:
+          src: "/tmp/prestashop.tar.gz"
+          dest: "/var/www/html/"
+          remote_src: yes
+          owner: apache
+          group: apache
+          mode: '0755'
+
+- name: Disable SELinux
+  template:
+          src: files/config
+          dest: /etc/selinux/config
+          owner: root
+          group: root
+          mode: '0644'
+  register: selinux_result
+
+- name: Restart httpd service
+  service:
+          name: httpd
+          state: restarted
+  when: selinux_result is success
+
+- name: Restart server
+  reboot:
+          reboot_timeout: 30
+          post_reboot_delay: 30
+  when: selinux_result is success
