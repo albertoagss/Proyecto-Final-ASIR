@@ -1,0 +1,78 @@
+---
+
+- name: Install MariaDB and required packages
+  apt:
+          name:
+                  - mariadb-server
+                  - python3
+                  - python3-mysqldb
+                  - ufw
+          state: present
+
+- name: Enable ufw
+  ufw:
+          state: enabled
+
+- name: Start MariaDB
+  service:
+          name: mariadb
+          enabled: true
+          state: restarted
+
+- name: Launch mysql_secure_installation
+  shell: |
+          echo -e "\nn\nY\nvagrant\nvagrant\nY\nn\nY\nY\n" | sudo mysql_secure_installation
+  args:
+          executable: /bin/bash
+
+- name: Import MariaDB configuration
+  template:
+          src: files/50-server.cnf
+          dest: /etc/mysql/mariadb.conf.d/50-server.cnf
+          owner: root
+          group: root
+          mode: '0755'
+  register: importation_result
+
+- name: Restart MariaDB
+  service:
+          name: mariadb
+          enabled: true
+          state: restarted
+  when: importation_result is success
+
+- name: Create db for Prestashop
+  mysql_db:
+          name: bdprestashop
+          login_user: root
+          login_password: vagrant
+          login_host: localhost
+          state: present
+
+- name: Create user for bd
+  mysql_user:
+          name: prestashop-user
+          password: 1234
+          priv: 'bdprestashop.*:ALL,GRANT'
+          host: '%'
+          login_user: root
+          login_password: vagrant
+          login_host: localhost
+          state: present
+
+- name: Enable port 3306 ufw
+  ufw:
+          rule: allow
+          port: "3306"
+  register: enable_3306
+
+- name: Enable port 22 ufw
+  ufw:
+          rule: allow
+          port: "22"
+  register: enable_22
+
+- name: Reload ufw
+  ufw:
+          state: reloaded
+  when: enable_3306 is success and enable_22 is success

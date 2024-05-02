@@ -1,0 +1,56 @@
+---
+- name: Install MariaDB and required modules
+  yum:
+          name:
+                  - mariadb-server
+                  - python3
+                  - python3-PyMySQL
+          state: latest
+  retries: 3
+  delay: 10
+  register: mariadb_result
+
+- name: Restart MariaDB
+  service:
+          name: mariadb
+          enabled: true
+          state: restarted
+  when: mariadb_result is success
+
+- name: Launch mysql_secure_installation
+  shell: |
+          echo -e "\nn\nY\nvagrant\nvagrant\nY\nn\nY\nY\n" | sudo mysql_secure_installation
+  args:
+          executable: /bin/bash
+
+- name: Create bd for Prestashop
+  mysql_db:
+          name: bdprestashop
+          login_user: root
+          login_password: vagrant
+          login_host: localhost
+          state: present
+
+- name: Create user for bd
+  mysql_user:
+          name: prestashop-user
+          password: 1234
+          priv: 'bdprestashop.*:ALL,GRANT'
+          host: '%'
+          login_user: root
+          login_password: vagrant
+          login_host: localhost
+          state: present
+
+- name: Enable mysql service on firewalld
+  firewalld:
+          port: 3306/tcp
+          permanent: true
+          state: enabled
+  register: firewalld_result
+
+- name: Restart firewalld
+  systemd:
+          name: firewalld
+          state: restarted
+  when: firewalld_result is success
