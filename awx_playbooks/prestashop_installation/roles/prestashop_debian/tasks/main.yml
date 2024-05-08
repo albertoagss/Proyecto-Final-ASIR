@@ -12,6 +12,8 @@
 - name: Update packages
   apt:
           update_cache: yes
+  reties: 3
+  delay: 10
   when: add_repo_result is success
 
 - name: Install php and extensions
