@@ -1,0 +1,48 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  #--------------------- DEBIAN11 CLIENT 1 --------------------------
+  config.vm.define "debian-client1" do |slave|
+    slave.vm.box = "debian/bookworm64"
+    slave.vm.hostname = "debian-client1"
+    slave.vm.network :private_network, ip: "192.168.10.70"
+    slave.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--name", "debian-client1"]
+      v.customize ["modifyvm", :id, "--memory", 2048]
+      v.customize ["modifyvm", :id, "--cpus", 2]
+    end
+    slave.vm.provision "shell", path: "./debian.sh" 
+  end
+  #--------------------- DEBIAN11 CLIENT 2 --------------------------
+  config.vm.define "debian-client2" do |slave|
+    slave.vm.box = "debian/bookworm64"
+    slave.vm.hostname = "debian-client2"
+    slave.vm.network :private_network, ip: "192.168.10.71"
+    slave.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--name", "debian-client2"]
+      v.customize ["modifyvm", :id, "--memory", 2048]
+      v.customize ["modifyvm", :id, "--cpus", 2]
+    end
+    slave.vm.provision "shell", path: "./debian.sh" 
+  end
+  #--------------------- DEBIAN11 CLIENT 3 --------------------------
+  config.vm.define "debian-client3" do |slave|
+    slave.vm.box = "debian/bookworm64"
+    slave.vm.hostname = "debian-client3"
+    slave.vm.network :private_network, ip: "192.168.10.72"
+    slave.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--name", "debian-client3"]
+      v.customize ["modifyvm", :id, "--memory", 2048]
+      v.customize ["modifyvm", :id, "--cpus", 2]
+    end
+    slave.vm.provision "shell", path: "./debian.sh" 
+  end
+
+end
