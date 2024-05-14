@@ -4,7 +4,7 @@
   become: true
 
   roles:
-          - role: prestashop_centos
+          - role: prestashop_redhat
             when: ansible_distribution == 'CentOS'
 
           - role: prestashop_debian
