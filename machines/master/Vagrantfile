@@ -1,58 +1,18 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-########### MÁQUINA MASTER QUE USO ACTUALMENTE PARA AWX ###########
-
-# Incluye:
-    # Python 3.11 con pip
-    # Git
-    # Ansible
-    # Docker y AWX lo instalamos después con mi rol 
-
-    Vagrant.configure("2") do |config|
-
-      config.vm.define "awx-control-node" do |master|
-        master.vm.box = "generic/centos8s"
-        master.vm.hostname = "awx-control-node"
-        master.vm.network :private_network, ip: "192.168.10.15"
-        master.vm.provider "virtualbox" do |v|
-          v.customize ["modifyvm", :id, "--ioapic", "on"]
-          v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-          v.customize ["modifyvm", :id, "--name", "awx-control-node"]
-          v.customize ["modifyvm", :id, "--memory", 2048]
-          v.customize ["modifyvm", :id, "--cpus", 1]
-        end
-    
-        $COMMANDS = <<-'BLOCK'
-        
-          sudo dnf -y update && sudo dnf -y upgrade
-    
-          #Remove old Python versions
-          sudo yum -y remove python3
-          
-          #Install Python 3.11 and pip module
-          sudo yum -y install python3.11
-          sudo yum -y install python3.11-pip
-    
-          sudo yum -y install git
-          sudo pip3 install ansible
-    
-          #sudo pip3 install molecule==3.4.0
-          #sudo pip3 install molecule[docker]==3.4.0
-    
-          #Install molecule 24.2.1.dev9, which uses python3.11 and ansible:2.16.5
-          #python3 -m pip install -U git+https://github.com/ansible-community/molecule
-          
-          #sudo pip3 install ansible-lint==5.1.1
-    
-          sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config;
-          sudo systemctl restart sshd
-          
-          echo "root:1234" | sudo chpasswd
-    
-        BLOCK
-        master.vm.provision "shell", inline: $COMMANDS
-      end
-    
+Vagrant.configure("2") do |config|
+  config.vm.define "tfg-control-node" do |master|
+    master.vm.box = "debian/bookworm64"
+    master.vm.hostname = "tfg-control-node"
+    master.vm.network :private_network, ip: "192.168.100.10"
+    master.vm.provider "virtualbox" do |v|
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--name", "tfg-control-node"]
+      v.customize ["modifyvm", :id, "--memory", 2048]
+      v.customize ["modifyvm", :id, "--cpus", 1]
     end
-    
+    #master.vm.provision "shell", path: "./master.sh"
+  end
+end
