@@ -26,8 +26,8 @@
 
 - name: Download Prestashop
   get_url:
-          #          url: "https://download.prestashop.com/download/releases/prestashop_1.7.8.8.zip"
-          url: "https://github.com/PrestaShop/PrestaShop/archive/refs/tags/8.1.5.tar.gz"
+          url: "https://download.prestashop.com/download/releases/prestashop_1.7.8.8.zip"
+          #url: "https://github.com/PrestaShop/PrestaShop/archive/refs/tags/8.1.5.tar.gz"
           dest: "/tmp/prestashop.zip"
   retries: 3
   delay: 10
