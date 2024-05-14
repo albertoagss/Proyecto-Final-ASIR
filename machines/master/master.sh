@@ -13,6 +13,7 @@ sudo apt -y install git
 # Install Ansible
 sudo pip3 install ansible
 
+# Enable SSH connection without password
 sudo sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config;
 sudo systemctl restart sshd;
 
