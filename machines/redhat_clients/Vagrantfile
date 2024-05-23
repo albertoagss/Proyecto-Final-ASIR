@@ -6,13 +6,11 @@ Vagrant.configure("2") do |config|
   config.vm.define "redhat-client2" do |slave|
     slave.vm.box = "generic/centos9s"
     slave.vm.hostname = "redhat-client2"
-    slave.vm.network :private_network, ip: "192.168.10.61"
+    slave.vm.network :private_network, ip: "192.168.10.70"
     slave.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--ioapic", "on"]
       v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       v.customize ["modifyvm", :id, "--name", "redhat-client2"]
-      v.customize ["modifyvm", :id, "--memory", 2048]
-      v.customize ["modifyvm", :id, "--cpus", 1]
     end
     slave.vm.provision "shell", path: "./redhat.sh" 
   end
@@ -20,7 +18,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "redhat-client3" do |slave|
     slave.vm.box = "generic/centos9s"
     slave.vm.hostname = "redhat-client3"
-    slave.vm.network :private_network, ip: "192.168.10.62"
+    slave.vm.network :private_network, ip: "192.168.10.71"
     slave.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--ioapic", "on"]
       v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
