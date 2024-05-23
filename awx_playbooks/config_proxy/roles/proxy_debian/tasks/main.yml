@@ -8,15 +8,15 @@
           group: root
           mode: '0644'
 
-- name: Enable proxy module
+- name: Enable apache modules
   apache2_module:
-          name: proxy
+          name: "{{ item }}"
           state: present
-
-- name: Enable proxy_http module
-  apache2_module:
-          name: proxy_http
-          state: present
+  with_items:
+          - proxy
+          - proxy_http
+          - proxy_balancer
+          - lbmethod_byrequests
 
 - name: Restart Apache
   service:
