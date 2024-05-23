@@ -2,21 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  #--------------------- CENTOS 9s CLIENT 1 --------------------------
-  config.vm.define "redhat-client1" do |slave|
-    slave.vm.box = "generic/centos9s"
-    slave.vm.hostname = "redhat-client1"
-    slave.vm.network :private_network, ip: "192.168.10.60"
-    slave.vm.provider "virtualbox" do |v|
-      v.customize ["modifyvm", :id, "--ioapic", "on"]
-      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-      v.customize ["modifyvm", :id, "--name", "redhat-client1"]
-      v.customize ["modifyvm", :id, "--memory", 2048]
-      v.customize ["modifyvm", :id, "--cpus", 2]
-    end
-    slave.vm.provision "shell", path: "./redhat.sh" 
-  end
-  #--------------------- CENTOS 9s CLIENT 2 --------------------------
+  #---------- REDHAT CLIENT 2 - PRESTASHOP SERVER ----------
   config.vm.define "redhat-client2" do |slave|
     slave.vm.box = "generic/centos9s"
     slave.vm.hostname = "redhat-client2"
@@ -26,11 +12,11 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       v.customize ["modifyvm", :id, "--name", "redhat-client2"]
       v.customize ["modifyvm", :id, "--memory", 2048]
-      v.customize ["modifyvm", :id, "--cpus", 2]
+      v.customize ["modifyvm", :id, "--cpus", 1]
     end
     slave.vm.provision "shell", path: "./redhat.sh" 
   end
-  #--------------------- CENTOS 9s CLIENT 3 --------------------------
+  #---------- REDHAT CLIENT 3 - MARIADB SERVER -------------
   config.vm.define "redhat-client3" do |slave|
     slave.vm.box = "generic/centos9s"
     slave.vm.hostname = "redhat-client3"
@@ -40,7 +26,7 @@ Vagrant.configure("2") do |config|
       v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       v.customize ["modifyvm", :id, "--name", "redhat-client3"]
       v.customize ["modifyvm", :id, "--memory", 2048]
-      v.customize ["modifyvm", :id, "--cpus", 2]
+      v.customize ["modifyvm", :id, "--cpus", 1]
     end
     slave.vm.provision "shell", path: "./redhat.sh" 
   end
