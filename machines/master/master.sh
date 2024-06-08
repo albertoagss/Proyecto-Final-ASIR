@@ -5,10 +5,10 @@ sudo apt-get -y update && sudo apt-get -y upgrade
 sudo apt -y remove python3
 
 # Install all dependencies
-sudo apt-get -y install vim git python3.11 pip ansible
+sudo apt-get -y install vim git tree python3.11 pip ansible
 
 # Clone project repository
-git clone https://github.com/albertoagss/Proyecto-Final-ASIR.git
+sudo git clone https://github.com/albertoagss/Proyecto-Final-ASIR.git
 
 # Enable SSH connection without password
 sudo sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config;
