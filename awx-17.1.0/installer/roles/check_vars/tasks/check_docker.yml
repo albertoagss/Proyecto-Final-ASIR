@@ -1,5 +1,8 @@
 # check_docker.yml
 ---
+
+# Check if 'postgres_data_dir' variable is defined in inventory file
+# This task will only run if 'pg_hostname' variable is undefined or an empty string
 - name: postgres_data_dir should be defined
   assert:
     that:
