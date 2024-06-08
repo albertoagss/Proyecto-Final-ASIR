@@ -12,7 +12,7 @@ sudo systemctl restart sshd;
 echo "root:1234" | sudo chpasswd
 
 # Change password for 'test_user' 
-echo "test_user:vagrant" | sudo chpasswd
+echo "vagrant:vagrant" | sudo chpasswd
 
 # Format CLI prompt
 echo "PS1='\e[1;32m\u@\h\e[m \e[1;36m\w $ \e[m'" | sudo tee -a /etc/bashrc
