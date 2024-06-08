@@ -7,6 +7,7 @@ localhost ansible_connection=local ansible_python_interpreter="/usr/bin/env pyth
 # be selected based on: latest, 1, 1.0, 1.0.0, 1.0.0.123
 # by default the base will be used to search for ansible/awx
 dockerhub_base=ansible
+dockerhub_version=17.1.0
 
 # Openshift Install
 # Will need to set -e openshift_password=developer -e docker_registry_password=$(oc whoami -t)
@@ -62,24 +63,18 @@ dockerhub_base=ansible
 # Common Docker parameters
 awx_task_hostname=awx
 awx_web_hostname=awxweb
+
 # Local directory that is mounted in the awx_postgres docker container to place the db in
-postgres_data_dir="/var/lib/awx/pgdocker"
+postgres_data_dir="/var/lib/pgdocker"
 host_port=80
 host_port_ssl=443
 #ssl_certificate=
 # Optional key file
 #ssl_certificate_key=
-docker_compose_dir="/var/lib/awx/awxcompose"
+docker_compose_dir="~/.awx/awxcompose"
 
-# Required for Openshift when building the image on your own
-# Optional for Openshift if using Dockerhub or another prebuilt registry
-# Required for Docker Compose Install if building the image on your own
-# Optional for Docker Compose Install if using Dockerhub or another prebuilt registry
-# Define if you want the image pushed to a registry. The container definition will also use these images
-# docker_registry=172.30.1.1:5000
-# docker_registry_repository=awx
-# docker_registry_username=developer
 
+# POSTGRES VARIABLES
 
 # Set pg_hostname if you have an external postgres server, otherwise
 # a new postgres service will be created
@@ -100,7 +95,7 @@ pg_port=5432
 
 # The following variable is only required when using the provided
 # containerized postgres deployment on OpenShift
-# pg_admin_password=postgrespass
+pg_admin_password=postgrespass
 
 # This will create or update a default admin (superuser) account in AWX, if not provided
 # then these default values are used
@@ -123,7 +118,7 @@ secret_key=Admin@123
 # Build AWX with official logos
 # Requires cloning awx-logos repo as a sibling of this project.
 # Review the trademark guidelines at https://github.com/ansible/awx-logos/blob/master/TRADEMARKS.md
-# awx_official=false
+awx_official=true
 
 # Proxy
 #http_proxy=http://proxy:3128

@@ -1,6 +1,8 @@
 ---
 - name: Build and deploy AWX
   hosts: localhost
+  become: true
   roles:
     - check_vars
+    - install_docker
     - local_docker
