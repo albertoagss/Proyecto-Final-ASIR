@@ -1,0 +1,10 @@
+[reverse_proxy]
+192.168.10.60
+
+[prestashop_servers]
+192.168.10.80
+192.168.10.70
+
+[mariadb_servers]
+192.168.10.81
+192.168.10.71
