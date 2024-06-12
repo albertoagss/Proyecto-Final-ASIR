@@ -1,19 +1,22 @@
 ---
 
 - name: Install PHP and extensions
-  yum:
-          name: "{{ item }}"
-  loop:
-          - php
-          - php-curl
-          - php-dom
-          - php-fileinfo
-          - php-gd
-          - php-intl
-          - php-mbstring
-          - php-zip
-          - php-json
-          - php-iconv
+  dnf:
+    name:
+      - php
+      - php-cli
+      - php-bcmath
+      - php-mysqli
+      - php-gd
+      - php-pdo
+      - php-xml
+      - php-intl
+      - php-posix
+      - php-json
+      - php-curl
+      - php-zip
+      - unzip
+    state: present
   retries: 3
   delay: 10
   register: php_result
@@ -26,20 +29,42 @@
 
 - name: Download Prestashop
   get_url:
-          url: "https://download.prestashop.com/download/releases/prestashop_1.7.8.8.zip"
-          #url: "https://github.com/PrestaShop/PrestaShop/archive/refs/tags/8.1.5.tar.gz"
-          dest: "/tmp/prestashop.zip"
+          url: https://download.prestashop.com/download/releases/prestashop_1.7.7.3.zip
+          dest: /tmp/prestashop_1.7.7.3.zip
   retries: 3
   delay: 10
 
 - name: Extract Prestashop files
-  unarchive:
-          src: "/tmp/prestashop.zip"
-          dest: "/var/www/html/"
-          remote_src: yes
-          owner: apache
-          group: apache
-          mode: '0755'
+  command: unzip prestashop_1.7.7.3.zip -d prestashop
+  args:
+    chdir: /tmp
+
+- name: Move PrestaShop to the web directory
+  command: mv /tmp/prestashop /var/www/html/prestashop
+  args:
+    creates: /var/www/html/prestashop
+
+- name: Change owner of PrestaShop directory
+  file:
+    path: /var/www/html/prestashop
+    owner: apache
+    group: apache
+    recurse: yes
+
+- name: Allow HTTP service through the firewall
+  firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- name: Allow HTTPS service through the firewall
+  firewalld:
+    service: https
+    permanent: yes
+    state: enabled
+    immediate: yes
+
 
 - name: Disable SELinux
   template:
@@ -54,10 +79,4 @@
   service:
           name: httpd
           state: restarted
-  when: selinux_result is success
-
-- name: Restart server
-  reboot:
-          reboot_timeout: 30
-          post_reboot_delay: 30
   when: selinux_result is success
