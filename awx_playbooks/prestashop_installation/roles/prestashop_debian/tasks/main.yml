@@ -2,20 +2,26 @@
 
 - name: Install php and extensions
   apt:
-          name: "{{ item }}"
-          #state: latest
-  with_items:
-          - php
-          - php-curl
-          - php-intl
-          - php-zip
-          - php-mysql
-          - php-gd
-          - php-mbstring
-          - php-xml
-          - unzip
+    name:
+      - php
+      - php-curl
+      - php-intl
+      - php-zip
+      - php-mysql
+      - php-gd
+      - php-mbstring
+      - php-xml
+      - unzip
+    state: present
   retries: 3
   delay: 10
+  register: php_result
+
+- name: Restart Apache service
+  service:
+    name: apache2
+    state: restarted
+  when: php_result is success
   
 - name: Download Prestashop
   get_url:
@@ -46,3 +52,14 @@
     path: /var/www/html/prestashop
     mode: 0755
     recurse: yes
+
+- name: Enable mod_rewrite module
+  command: a2enmod rewrite
+  register: enable_rewrite
+
+- name: Restart Apache service
+  service:
+    name: apache2
+    state: restarted
+  when: enable_rewrite is success
+
