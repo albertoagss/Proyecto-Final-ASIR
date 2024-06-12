@@ -3,6 +3,7 @@
   hosts: localhost
   become: true
   roles:
+    - ansible_config
     - check_vars
     - install_docker
     - local_docker

@@ -1,0 +1,16 @@
+---
+
+- name: Ensure /etc/ansible directory exists
+  file:
+    path: /etc/ansible
+    state: directory
+    mode: '0755'
+
+- name: Copy hosts file to /etc/ansible
+  copy:
+    src: hosts
+    dest: /etc/ansible/hosts
+    owner: root
+    group: root
+    mode: '0644'
+

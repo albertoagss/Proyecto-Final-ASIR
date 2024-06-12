@@ -1,6 +1,6 @@
 ---
 - name: Install Prestashop
-  hosts: Wordpress
+  hosts: Prestashop
   become: true
 
   roles:

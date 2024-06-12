@@ -1,62 +1,65 @@
 ---
 
-- name: Add GPG key for PHP8.1 repo
-  uri:
-          url: "https://packages.sury.org/php/apt.gpg"
-          dest: "/usr/share/keyrings/deb.sury.org-php.gpg"
-
-- name: Add PHP repo to sources.list.d
-  shell: 'echo "deb [signed-by=/usr/share/keeyrings/deb.sury.org-php.gpg] https://PACKAGES.SURY.ORG/PHP/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
-  register: add_repo_result
-
-- name: Update packages
-  apt:
-          update_cache: yes
-  retries: 3
-  delay: 10
-  when: add_repo_result is success
-
 - name: Install php and extensions
   apt:
-          name: "{{ item }}"
-          state: latest
-  loop:
-          - php8.1
-          - php8.1-curl
-          - php8.1-xmlrpc
-          - php8.1-soap
-          - php8.1-intl
-          - php8.1-zip
-          - php8.1-cli
-          - php8.1-mysql
-          - php8.1-common
-          - php8.1-opcache
-          - php8.1-memcached
-          - php8.1-bcmath
-          - php8.1-gd
-          - php8.1-mbstring
-          - php8.1-xml
-          - php8.1-gmp
-          - php8.1-imagick
-          - unzip
+    name:
+      - php
+      - php-curl
+      - php-intl
+      - php-zip
+      - php-mysql
+      - php-gd
+      - php-mbstring
+      - php-xml
+      - unzip
+    state: present
+  retries: 3
+  delay: 10
+  register: php_result
+
+- name: Restart Apache service
+  service:
+    name: apache2
+    state: restarted
+  when: php_result is success
+  
+- name: Download Prestashop
+  get_url:
+          url: https://download.prestashop.com/download/releases/prestashop_1.7.7.3.zip
+          dest: /tmp/prestashop_1.7.7.3.zip
   retries: 3
   delay: 10
 
-- name: Import PHP configuration
-  template:
-          src:
-          dest:
-
-- name: Download Prestashop
-  get_url:
-          url: "https://github.com/PrestaShop/PrestaShop/archive/refs/tags/8.1.5.tar.gz"
-          dest: "/tmp/prestashop.tar.gz"
-
 - name: Extract Prestashop files
-  unarchive:
-          src: "/tmp/prestashop.tar.gz"
-          dest: "/var/www/html/"
-          remote_src: yes
-          owner: www-data
-          group: www-data
-          mode: '0755'
+  command: unzip prestashop_1.7.7.3.zip -d prestashop
+  args:
+    chdir: /tmp
+
+- name: Move PrestaShop to the web directory
+  command: mv /tmp/prestashop /var/www/html/prestashop
+  args:
+    creates: /var/www/html/prestashop
+
+- name: Change owner of PrestaShop directory
+  file:
+    path: /var/www/html/prestashop
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+- name: Change permissions of PrestaShop directory
+  file:
+    path: /var/www/html/prestashop
+    mode: 0755
+    recurse: yes
+
+- name: Enable mod_rewrite module
+  command: a2enmod rewrite
+  register: enable_rewrite
+
+- name: Restart Apache service
+  service:
+    name: apache2
+    state: restarted
+  when: enable_rewrite is success
+
